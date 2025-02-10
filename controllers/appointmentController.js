@@ -2,6 +2,7 @@ const {
   createAppointment,
   getAllAppointments,
   updateAppointment,
+  deleteAppointment,
 } = require("../models/appointmentModel");
 const AppError = require("../utils/appError");
 
@@ -63,6 +64,20 @@ exports.updateAppointment = async (req, res, next) => {
     if (!updatedAppointment) throw new AppError("Appointment not updated", 500);
 
     res.status(200).json({ status: "success", data: updatedAppointment });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteAppointment = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const deletedAppointment = await deleteAppointment(id);
+
+    if (!deletedAppointment) throw new AppError("Appointment not deleted", 500);
+
+    res.status(200).json({ status: "success", data: deletedAppointment });
   } catch (err) {
     next(err);
   }

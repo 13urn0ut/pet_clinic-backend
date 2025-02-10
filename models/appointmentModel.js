@@ -85,3 +85,13 @@ exports.updateAppointment = async (id, appointment) => {
 
   return updatedAppointment;
 };
+
+exports.deleteAppointment = async (id) => {
+  const [deletedAppointment] = await sql`
+  DELETE FROM appointments
+  WHERE id = ${id}
+  RETURNING *
+  `;
+
+  return deletedAppointment;
+};

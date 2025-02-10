@@ -3,6 +3,7 @@ const {
   createAppointment,
   getAllAppointments,
   updateAppointment,
+  deleteAppointment,
 } = require("../controllers/appointmentController");
 const { protect, allowAccessTo } = require("../controllers/authController");
 const {
@@ -21,7 +22,8 @@ appointmentRouter
 
 appointmentRouter
   .route("/:id")
-  .all(protect, allowAccessTo("admin"), checkAppointmentId)
-  .patch(checkUpdateAppointmentBody, validate, updateAppointment);
+  .all(protect, checkAppointmentId)
+  .patch(checkUpdateAppointmentBody, validate, updateAppointment)
+  .delete(validate, deleteAppointment);
 
 module.exports = appointmentRouter;
