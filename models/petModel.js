@@ -9,3 +9,13 @@ exports.registerPet = async (pet) => {
 
   return newPet;
 };
+
+exports.getPetById = async (id) => {
+  const [pet] = await sql`
+  SELECT *
+  FROM pets
+  WHERE id = ${id}
+  `;
+
+  return pet;
+};

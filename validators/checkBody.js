@@ -1,6 +1,7 @@
 const { body, checkExact } = require("express-validator");
 const argon2 = require("argon2");
 const { getUserByEmail } = require("../models/userModel");
+const { getPetById } = require("../models/petModel");
 
 exports.checkSignupBody = [
   body("first_name")
@@ -76,6 +77,50 @@ exports.checkLoginBody = [
 
 exports.checkRegisterPetBody = [
   body("name").trim().notEmpty().withMessage("Name is required").toLowerCase(),
+
+  checkExact([], { message: "Invalid fields" }),
+];
+
+exports.checkCreateAppointmentBody = [
+  body("date")
+    .trim()
+    .notEmpty()
+    .withMessage("Date is required")
+    .isISO8601()
+    .withMessage("Invalid date format"),
+
+  body("time")
+    .trim()
+    .notEmpty()
+    .withMessage("Time is required")
+    .isTime({
+      hours: { min: 0, max: 23 },
+      minutes: { min: 0, max: 59 },
+    })
+    .withMessage("Invalid time format"),
+
+  body("notes").trim().optional().isString().withMessage("Invalid notes"),
+
+  body("pet_id")
+    .trim()
+    .notEmpty()
+    .withMessage("Pet ID is required")
+    .isInt()
+    .withMessage("Invalid pet ID")
+    .custom(async (pet_id, { req }) => {
+      try {
+        const pet = await getPetById(pet_id);
+
+        if (!pet) throw new Error("Pet not found");
+
+        if (pet.user_id !== req.user?.id)
+          throw new Error("You are not the owner of this pet");
+
+        return true;
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    }),
 
   checkExact([], { message: "Invalid fields" }),
 ];
