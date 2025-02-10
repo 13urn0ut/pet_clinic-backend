@@ -5,7 +5,7 @@ const {
   updateAppointment,
   deleteAppointment,
 } = require("../controllers/appointmentController");
-const { protect, allowAccessTo } = require("../controllers/authController");
+const { protect } = require("../controllers/authController");
 const {
   checkCreateAppointmentBody,
   checkUpdateAppointmentBody,
