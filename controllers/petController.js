@@ -1,16 +1,16 @@
-const { getAll } = require("../models/petModel");
+const { registerPet } = require("../models/petModel");
 const AppError = require("../utils/appError");
 
-exports.getAll = async (req, res, next) => {
+exports.registerPet = async (req, res, next) => {
   try {
-    const data = await getAll();
+    const { name } = req.body;
+    const { id: user_id } = req.user;
 
-    if (!data || data.length === 0) throw new AppError("No data found", 404);
+    const newPet = await registerPet({ name, user_id });
 
-    res.status(200).json({
-      status: "success",
-      data,
-    });
+    if (!newPet) throw new AppError("Pet registration failed", 500);
+
+    res.status(201).json({ status: "success", data: newPet });
   } catch (err) {
     next(err);
   }

@@ -73,3 +73,9 @@ exports.checkLoginBody = [
 
   checkExact([], { message: "Invalid fields" }),
 ];
+
+exports.checkRegisterPetBody = [
+  body("name").trim().notEmpty().withMessage("Name is required").toLowerCase(),
+
+  checkExact([], { message: "Invalid fields" }),
+];

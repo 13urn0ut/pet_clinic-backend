@@ -21,9 +21,9 @@ exports.getUserById = async (id) => {
     if (!user) return;
 
     user.pets = await sql`
-    SELECT *
+    SELECT pets.id, pets.name
     FROM pets
-    WHERE user_id = ${user?.id}
+    WHERE pets.user_id = ${user?.id}
   `;
 
     return user;
@@ -43,9 +43,9 @@ exports.getUserByEmail = async (email) => {
     if (!user) return;
 
     user.pets = await sql`
-    SELECT *
+    SELECT pets.id, pets.name
     FROM pets
-    WHERE user_id = ${user?.id}
+    WHERE pets.user_id = ${user?.id}
   `;
 
     return user;
