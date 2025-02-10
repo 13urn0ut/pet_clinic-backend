@@ -1,3 +1,4 @@
+// const e = require("express");
 const { sql } = require("../dbConnection");
 
 exports.createAppointment = async (appointment) => {
@@ -54,4 +55,33 @@ exports.getAppointmentCount = async (userId) => {
   ${userId ? sql`WHERE users.id = ${userId}` : sql``}`;
 
   return count;
+};
+
+exports.getAppointmentById = async (id) => {
+  const [appointment] = await sql`
+  SELECT appointments.*, users.id AS user_id
+  FROM appointments
+  JOIN pets
+  ON pets.id = appointments.pet_id
+  JOIN users
+  ON pets.user_id = users.id
+  WHERE appointments.id = ${id}
+  `;
+
+  return appointment;
+};
+
+exports.updateAppointment = async (id, appointment) => {
+  const [columns] = Object.keys(appointment).filter(
+    (key) => appointment[key] !== undefined
+  );
+
+  const [updatedAppointment] = await sql`
+  UPDATE appointments 
+  SET ${sql(appointment, columns)}
+  WHERE id = ${id}
+  RETURNING *
+  `;
+
+  return updatedAppointment;
 };

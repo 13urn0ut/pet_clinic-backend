@@ -124,3 +124,48 @@ exports.checkCreateAppointmentBody = [
 
   checkExact([], { message: "Invalid fields" }),
 ];
+
+exports.checkUpdateAppointmentBody = [
+  body("date").trim().optional().isISO8601().withMessage("Invalid date format"),
+
+  body("time")
+    .trim()
+    .optional()
+    .isTime({
+      hours: { min: 0, max: 23 },
+      minutes: { min: 0, max: 59 },
+    })
+    .withMessage("Invalid time format"),
+
+  body("notes").trim().optional().isString().withMessage("Invalid notes"),
+
+  body("pet_id")
+    .trim()
+    .optional()
+    .isInt()
+    .withMessage("Invalid pet ID")
+    .custom(async (pet_id, { req }) => {
+      try {
+        const pet = await getPetById(pet_id);
+
+        if (!pet) throw new Error("Pet not found");
+
+        if (pet.user_id !== req.user?.id)
+          throw new Error("You are not the owner of this pet");
+
+        return true;
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    }),
+
+  body("confirmed")
+    .trim()
+    .optional()
+    .isBoolean()
+    .withMessage("Invalid confirmed value"),
+
+  checkExact([], { message: "Invalid fields" }),
+
+  body().exists().withMessage("No fields to update"),
+];
