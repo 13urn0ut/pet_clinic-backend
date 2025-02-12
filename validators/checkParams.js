@@ -11,7 +11,7 @@ exports.checkAppointmentId = [
 
         if (!appointment) throw new Error("Appointment not found");
 
-        if (appointment.user_id !== req.user?.id)
+        if (appointment.user_id !== req.user?.id && req.user?.role !== "admin")
           throw new Error("You are not the owner of this appointment");
 
         return true;

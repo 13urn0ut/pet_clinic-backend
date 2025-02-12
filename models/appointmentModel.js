@@ -62,7 +62,7 @@ exports.getAppointmentById = async (id) => {
 };
 
 exports.updateAppointment = async (id, appointment) => {
-  const [columns] = Object.keys(appointment).filter(
+  const columns = Object.keys(appointment).filter(
     (key) => appointment[key] !== undefined
   );
 
