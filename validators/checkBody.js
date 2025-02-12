@@ -82,6 +82,13 @@ exports.checkRegisterPetBody = [
 ];
 
 exports.checkCreateAppointmentBody = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .normalizeEmail(),
+
   body("date")
     .trim()
     .notEmpty()
@@ -101,26 +108,28 @@ exports.checkCreateAppointmentBody = [
 
   body("notes").trim().optional().isString().withMessage("Invalid notes"),
 
-  body("pet_id")
-    .trim()
-    .notEmpty()
-    .withMessage("Pet ID is required")
-    .isInt()
-    .withMessage("Invalid pet ID")
-    .custom(async (pet_id, { req }) => {
-      try {
-        const pet = await getPetById(pet_id);
+  // body("pet_id")
+  //   .trim()
+  //   .notEmpty()
+  //   .withMessage("Pet ID is required")
+  //   .isInt()
+  //   .withMessage("Invalid pet ID")
+  //   .custom(async (pet_id, { req }) => {
+  //     try {
+  //       const pet = await getPetById(pet_id);
 
-        if (!pet) throw new Error("Pet not found");
+  //       if (!pet) throw new Error("Pet not found");
 
-        if (pet.user_id !== req.user?.id)
-          throw new Error("You are not the owner of this pet");
+  //       if (pet.user_id !== req.user?.id)
+  //         throw new Error("You are not the owner of this pet");
 
-        return true;
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    }),
+  //       return true;
+  //     } catch (err) {
+  //       throw new Error(err.message);
+  //     }
+  //   }),
+
+  body("pet_name").trim().isString().withMessage("Invalid pet name"),
 
   checkExact([], { message: "Invalid fields" }),
 ];

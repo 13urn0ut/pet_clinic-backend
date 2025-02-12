@@ -4,7 +4,7 @@ const { sql } = require("../dbConnection");
 exports.createAppointment = async (appointment) => {
   const [newAppointment] = await sql`
   INSERT INTO appointments 
-  ${sql(appointment, "date", "notes", "pet_id", "confirmed")}
+  ${sql(appointment, "date", "notes", "pet_name", "confirmed", "user_id")}
   RETURNING *
   `;
 
@@ -16,12 +16,10 @@ exports.getAllAppointments = async (filter) => {
 
   const data = await sql.begin(async () => {
     const appointments = await sql`
-    SELECT appointments.*, pets.name AS pet_name, users.first_name, users.last_name
+    SELECT appointments.*, users.first_name, users.last_name
     FROM appointments
-    JOIN pets
-    ON pets.id = appointments.pet_id
     JOIN users
-    ON pets.user_id = users.id
+    ON appointments.user_id = users.id
     ${userId ? sql`WHERE users.id = ${userId}` : sql``}
     ORDER BY ${sql.unsafe(sortBy)} ${sql.unsafe(sortDirection)}
     LIMIT ${sql`${limit}`}
@@ -31,10 +29,8 @@ exports.getAllAppointments = async (filter) => {
     const [{ count }] = await sql`
     SELECT COUNT(appointments.id)
     FROM appointments
-    JOIN pets
-    ON pets.id = appointments.pet_id
     JOIN users
-    ON pets.user_id = users.id
+    ON appointments.user_id = users.id
     ${userId ? sql`WHERE users.id = ${userId}` : sql``}
     `;
 
@@ -48,10 +44,8 @@ exports.getAppointmentCount = async (userId) => {
   const [count] = await sql`
   SELECT COUNT(appointments.id)
   FROM appointments
-  JOIN pets
-  ON pets.id = appointments.pet_id
   JOIN users
-  ON pets.user_id = users.id
+  ON appointments.user_id = users.id
   ${userId ? sql`WHERE users.id = ${userId}` : sql``}`;
 
   return count;
@@ -59,12 +53,8 @@ exports.getAppointmentCount = async (userId) => {
 
 exports.getAppointmentById = async (id) => {
   const [appointment] = await sql`
-  SELECT appointments.*, users.id AS user_id
+  SELECT appointments.*
   FROM appointments
-  JOIN pets
-  ON pets.id = appointments.pet_id
-  JOIN users
-  ON pets.user_id = users.id
   WHERE appointments.id = ${id}
   `;
 

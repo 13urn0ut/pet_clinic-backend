@@ -4,17 +4,21 @@ const {
   updateAppointment,
   deleteAppointment,
 } = require("../models/appointmentModel");
+const { getUserByEmail } = require("../models/userModel");
 const AppError = require("../utils/appError");
 const { capitalise } = require("../utils/capitalise");
 
 exports.createAppointment = async (req, res, next) => {
   try {
-    const { date, time, notes, pet_id } = req.body;
+    const { date, time, notes, pet_name, email } = req.body;
+
+    const user = await getUserByEmail(email);
 
     const newAppointment = await createAppointment({
       date: `${date}T${time}:00.000Z`,
       notes: notes || "",
-      pet_id,
+      pet_name,
+      user_id: user.id,
       confirmed: false,
     });
 
