@@ -156,6 +156,9 @@ exports.getAuthenticatedUser = (req, res, next) => {
     authUser.id = undefined;
     authUser.first_name = capitalise(authUser.first_name);
     authUser.last_name = capitalise(authUser.last_name);
+    authUser.pets.forEach((pet) => {
+      pet.name = capitalise(pet.name);
+    });
 
     res.status(200).json({
       status: "success",
