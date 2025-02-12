@@ -5,6 +5,7 @@ const {
   deleteAppointment,
 } = require("../models/appointmentModel");
 const AppError = require("../utils/appError");
+const { capitalise } = require("../utils/capitalise");
 
 exports.createAppointment = async (req, res, next) => {
   try {
@@ -35,6 +36,12 @@ exports.getAllAppointments = async (req, res, next) => {
       sortBy: sortBy || "date",
       sortDirection: sortDirection || "ASC",
       userId: userId || null,
+    });
+
+    data.appointments.forEach((appointment) => {
+      appointment.pet_name = capitalise(appointment.pet_name);
+      appointment.first_name = capitalise(appointment.first_name);
+      appointment.last_name = capitalise(appointment.last_name);
     });
 
     res.status(200).json({

@@ -5,6 +5,7 @@ const {
   getUserByEmail,
 } = require("../models/userModel");
 const AppError = require("../utils/appError");
+const { capitalise } = require("../utils/capitalise");
 
 //argon used for hashing passwords
 const argon2 = require("argon2");
@@ -54,6 +55,8 @@ exports.signup = async (req, res, next) => {
     // hide user password and id before sending to client
     createdUser.password = undefined;
     createdUser.id = undefined;
+    createUser.first_name = capitalise(createUser.first_name);
+    createUser.last_name = capitalise(createUser.last_name);
 
     res.status(201).json({
       status: "success",
@@ -76,6 +79,8 @@ exports.login = async (req, res, next) => {
     // hide user password and id before sending to client
     user.password = undefined;
     user.id = undefined;
+    user.first_name = capitalise(user.first_name);
+    user.last_name = capitalise(user.last_name);
 
     res.status(200).json({
       status: "success",
@@ -149,6 +154,8 @@ exports.getAuthenticatedUser = (req, res, next) => {
     const authUser = req.user;
     authUser.password = undefined;
     authUser.id = undefined;
+    authUser.first_name = capitalise(authUser.first_name);
+    authUser.last_name = capitalise(authUser.last_name);
 
     res.status(200).json({
       status: "success",
