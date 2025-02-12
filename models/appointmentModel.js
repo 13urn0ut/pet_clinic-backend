@@ -66,12 +66,28 @@ exports.updateAppointment = async (id, appointment) => {
     (key) => appointment[key] !== undefined
   );
 
-  const [updatedAppointment] = await sql`
-  UPDATE appointments 
-  SET ${sql(appointment, columns)}
-  WHERE id = ${id}
-  RETURNING *
-  `;
+  const updatedAppointment = await sql.begin(async () => {
+    const [updatedAppointment] = await sql`
+    UPDATE appointments 
+    SET ${sql(appointment, columns)}
+    WHERE id = ${id}
+    RETURNING *
+    `;
+
+    [{ first_name: updatedAppointment.first_name }] = await sql`
+    SELECT first_name
+    FROM users
+    WHERE id = ${updatedAppointment?.user_id}
+    `;
+
+    [{ last_name: updatedAppointment.last_name }] = await sql`
+    SELECT last_name
+    FROM users
+    WHERE id = ${updatedAppointment?.user_id}
+    `;
+
+    return updatedAppointment;
+  });
 
   return updatedAppointment;
 };
