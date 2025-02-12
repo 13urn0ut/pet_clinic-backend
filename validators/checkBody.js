@@ -172,7 +172,12 @@ exports.checkUpdateAppointmentBody = [
     .trim()
     .optional()
     .isBoolean()
-    .withMessage("Invalid confirmed value"),
+    .withMessage("Invalid confirmed value")
+    .custom((confirmed, { req }) => {
+      if (req.user?.role !== "admin") throw new Error("You are not an admin");
+
+      return true;
+    }),
 
   checkExact([], { message: "Invalid fields" }),
 
