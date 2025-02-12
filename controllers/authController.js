@@ -55,8 +55,8 @@ exports.signup = async (req, res, next) => {
     // hide user password and id before sending to client
     createdUser.password = undefined;
     createdUser.id = undefined;
-    createUser.first_name = capitalise(createUser.first_name);
-    createUser.last_name = capitalise(createUser.last_name);
+    createdUser.first_name = capitalise(createdUser.first_name);
+    createdUser.last_name = capitalise(createdUser.last_name);
 
     res.status(201).json({
       status: "success",
