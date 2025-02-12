@@ -32,14 +32,14 @@ exports.createAppointment = async (req, res, next) => {
 
 exports.getAllAppointments = async (req, res, next) => {
   try {
-    const { page, limit, sortBy, sortDirection, userId } = req.query;
+    const { page, limit, sortBy, sortDirection } = req.query;
 
     const data = await getAllAppointments({
       page: page || 1,
       limit: limit || 10,
       sortBy: sortBy || "date",
       sortDirection: sortDirection || "ASC",
-      userId: userId || null,
+      userId: req.user.role === "admin" ? null : req.user.id,
     });
 
     data.appointments.forEach((appointment) => {
