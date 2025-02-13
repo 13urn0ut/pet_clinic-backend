@@ -148,25 +148,10 @@ exports.checkUpdateAppointmentBody = [
 
   body("notes").trim().optional().isString().withMessage("Invalid notes"),
 
-  body("pet_id")
+  body("pet_name")
     .trim()
-    .optional()
-    .isInt()
-    .withMessage("Invalid pet ID")
-    .custom(async (pet_id, { req }) => {
-      try {
-        const pet = await getPetById(pet_id);
-
-        if (!pet) throw new Error("Pet not found");
-
-        if (pet.user_id !== req.user?.id)
-          throw new Error("You are not the owner of this pet");
-
-        return true;
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    }),
+    .optional(),
+    
 
   body("confirmed")
     .trim()
