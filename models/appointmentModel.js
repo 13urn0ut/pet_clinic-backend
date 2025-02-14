@@ -12,7 +12,7 @@ exports.createAppointment = async (appointment) => {
 };
 
 exports.getAllAppointments = async (filter) => {
-  const { page, limit, sortBy, sortDirection, userId } = filter;
+  const { page, limit, sortBy, confirmed, sortDirection, userId } = filter;
 
   const data = await sql.begin(async () => {
     const appointments = await sql`
@@ -21,6 +21,15 @@ exports.getAllAppointments = async (filter) => {
     JOIN users
     ON appointments.user_id = users.id
     ${userId ? sql`WHERE users.id = ${userId}` : sql``}
+    ${userId && confirmed !== null ? sql`AND` : sql``}
+    ${!userId && confirmed !== null ? sql`WHERE` : sql``}
+    ${
+      confirmed === null
+        ? sql``
+        : confirmed
+          ? sql.unsafe(`appointments.confirmed`)
+          : sql.unsafe(`NOT appointments.confirmed`)
+    }
     ORDER BY ${sql.unsafe(sortBy)} ${sql.unsafe(sortDirection)}
     LIMIT ${sql`${limit}`}
     OFFSET ${sql`${(page - 1) * limit}`}

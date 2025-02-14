@@ -22,11 +22,18 @@ exports.checkGetAllAppointmentsFilter = [
 
   query("limit").optional().isInt({ min: 1 }).withMessage("Invalid limit"),
 
+  query("confirmed")
+    .optional()
+    .isString()
+    .withMessage("Invalid filterBy")
+    .isIn(["true", "false"])
+    .withMessage("FilterBy must be 'confirmed'"),
+
   query("sortBy")
     .optional()
     .isString()
     .withMessage("Invalid sortBy")
-    .isIn(["date", "confirmed"])
+    .isIn(["date", "rating", "confirmed"])
     .withMessage("SortBy must be 'date' or 'confirmed'"),
 
   query("sortDirection")

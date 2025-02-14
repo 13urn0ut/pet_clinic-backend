@@ -1,7 +1,7 @@
 const { body, checkExact } = require("express-validator");
 const argon2 = require("argon2");
 const { getUserByEmail } = require("../models/userModel");
-const { getPetById } = require("../models/petModel");
+// const { getPetById } = require("../models/petModel");
 
 exports.checkSignupBody = [
   body("first_name")
