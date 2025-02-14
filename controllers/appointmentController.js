@@ -61,12 +61,13 @@ exports.getAllAppointments = async (req, res, next) => {
 exports.updateAppointment = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { date, time, notes, pet_name, confirmed } = req.body;
+    const { date, time, notes, pet_name, confirmed, rating } = req.body;
 
     const appointment = {
       date: date && time ? `${date}T${time}:00.000Z` : undefined,
       notes,
       pet_name,
+      rating,
       confirmed: confirmed === "true" ? true : false,
     };
 

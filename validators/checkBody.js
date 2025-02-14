@@ -148,10 +148,7 @@ exports.checkUpdateAppointmentBody = [
 
   body("notes").trim().optional().isString().withMessage("Invalid notes"),
 
-  body("pet_name")
-    .trim()
-    .optional(),
-    
+  body("pet_name").trim().optional(),
 
   body("confirmed")
     .trim()
@@ -160,6 +157,20 @@ exports.checkUpdateAppointmentBody = [
     .withMessage("Invalid confirmed value")
     .custom((confirmed, { req }) => {
       if (req.user?.role !== "admin") throw new Error("You are not an admin");
+
+      return true;
+    }),
+
+  body("rating")
+    .trim()
+    .optional()
+    .isInt({ min: 1, max: 5 })
+    .withMessage("Invalid rating value")
+    .custom((rating, { req }) => {
+      if (req.user?.role === "admin")
+        throw new Error("You are not allowed to rate");
+
+      req.body.confirmed = "true";
 
       return true;
     }),
