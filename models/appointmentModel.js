@@ -64,7 +64,8 @@ exports.getAppointmentCount = async (userId) => {
   FROM appointments
   JOIN users
   ON appointments.user_id = users.id
-  ${userId ? sql`WHERE users.id = ${userId}` : sql``}`;
+  ${userId ? sql`WHERE users.id = ${userId}` : sql``}
+  `;
 
   return count;
 };
