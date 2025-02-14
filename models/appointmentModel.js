@@ -41,6 +41,15 @@ exports.getAllAppointments = async (filter) => {
     JOIN users
     ON appointments.user_id = users.id
     ${userId ? sql`WHERE users.id = ${userId}` : sql``}
+    ${userId && confirmed !== null ? sql`AND` : sql``}
+    ${!userId && confirmed !== null ? sql`WHERE` : sql``}
+    ${
+      confirmed === null
+        ? sql``
+        : confirmed
+          ? sql.unsafe(`appointments.confirmed`)
+          : sql.unsafe(`NOT appointments.confirmed`)
+    }
     `;
 
     return { appointments, count };
