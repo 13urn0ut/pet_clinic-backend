@@ -1,20 +1,22 @@
 const { body, checkExact } = require("express-validator");
 const argon2 = require("argon2");
 const { getUserByEmail } = require("../models/userModel");
-// const { getPetById } = require("../models/petModel");
+const { capitalise } = require("../utils/capitalise");
 
 exports.checkSignupBody = [
   body("first_name")
     .trim()
     .notEmpty()
     .withMessage("Name is required")
-    .toLowerCase(),
+    .toLowerCase()
+    .customSanitizer((first_name) => capitalise(first_name)),
 
   body("last_name")
     .trim()
     .notEmpty()
     .withMessage("Last name is required")
-    .toLowerCase(),
+    .toLowerCase()
+    .customSanitizer((last_name) => capitalise(last_name)),
 
   body("email")
     .trim()
@@ -129,7 +131,11 @@ exports.checkCreateAppointmentBody = [
   //     }
   //   }),
 
-  body("pet_name").trim().isString().withMessage("Invalid pet name"),
+  body("pet_name")
+    .trim()
+    .isString()
+    .withMessage("Invalid pet name")
+    .customSanitizer((pet_name) => capitalise(pet_name)),
 
   checkExact([], { message: "Invalid fields" }),
 ];
@@ -148,7 +154,10 @@ exports.checkUpdateAppointmentBody = [
 
   body("notes").trim().optional().isString().withMessage("Invalid notes"),
 
-  body("pet_name").trim().optional(),
+  body("pet_name")
+    .trim()
+    .optional()
+    .customSanitizer((pet_name) => capitalise(pet_name)),
 
   body("confirmed")
     .trim()
